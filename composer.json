@@ -1,0 +1,52 @@
+{
+    "name": "nu1ww/clover-card-point-php",
+    "description": "PHP adapter for CardConnect CardPointe API",
+    "keywords": [
+        "cardconnect",
+        "cardpointe"
+    ],
+    "homepage": "https://github.com/Dewbud/CardConnect",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nuwan",
+            "email": "nuwa@layoutindex.com"
+        },
+        {
+            "name": "Dewbud",
+            "email": "jalfonso1134@gmail.com"
+        }
+    ],
+    "scripts": {
+        "test": "phpunit",
+        "lint": [
+            "php-cs-fixer fix --config ./.php_cs"
+        ]
+    },
+    "autoload": {
+        "psr-4": {
+            "Nu1ww\\CardConnect\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Nu1ww\\CardConnect\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.0",
+        "ext-json": "*",
+        "illuminate/support": "~5.0",
+        "guzzlehttp/guzzle": "^6.5|^7.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "phpunit/phpunit": "^8.5"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}
