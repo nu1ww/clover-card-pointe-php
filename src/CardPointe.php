@@ -2,6 +2,7 @@
 
 namespace Nu1ww\CardConnect;
 
+use Illuminate\Support\Facades\DB;
 use Nu1ww\CardConnect\Exceptions\CardConnectException;
 use Nu1ww\CardConnect\Requests\AuthorizationRequest;
 use Nu1ww\CardConnect\Responses\AuthorizationResponse;
@@ -99,6 +100,142 @@ class CardPointe
         $this->currency = $currency;
         $this->isWallet = $isWallet;
         $this->setEndpoint($endpoint);
+    }
+
+
+    /**
+     * Getters / Setters.
+     */
+
+    /**
+     * Get merchant ID.
+     *
+     * @return string
+     */
+    public function getMerchantId()
+    {
+        return $this->merchant_id;
+    }
+
+    /**
+     * Set merchant ID.
+     *
+     * @param string $merchant_id merchant ID
+     *
+     * @return self
+     */
+    public function setMerchantId(string $merchant_id)
+    {
+        $this->merchant_id = $merchant_id;
+
+        return $this;
+    }
+
+    /**
+     * Get gateway username.
+     *
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set username.
+     *
+     * @param string $user API username
+     *
+     * @return self
+     */
+    public function setUser(string $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get password.
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set password.
+     *
+     * @param string $password API password
+     *
+     * @return self
+     */
+    public function setPassword(string $password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get endpoint.
+     *
+     * @return string
+     */
+    public function getEndpoint()
+    {
+        return $this->endpoint;
+    }
+
+    /**
+     * Set endpoint.
+     *
+     * @param string $endpoint https://sub.domain.tld:port/
+     *
+     * @return self
+     */
+    public function setEndpoint(string $endpoint)
+    {
+        $this->endpoint = $endpoint;
+
+        if ('/' != substr($this->endpoint, -1)) {
+            $this->endpoint .= '/';
+        }
+        if ($this->isWallet) {
+            $this->endpoint .= 'cardsecure/api/';
+        } else {
+            $this->endpoint .= 'cardconnect/rest/';
+        }
+
+        $this->http = new Client(['base_uri' => $this->endpoint]);
+
+        return $this;
+    }
+
+    /**
+     * Get currency code.
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Set currency code.
+     *
+     * @param string $currency currency code
+     *
+     * @return self
+     */
+    public function setCurrency(string $currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
     }
 
     /**
@@ -406,6 +543,8 @@ class CardPointe
             // Send request
             $res                 = $this->http->request($verb, $resource, $options);
             $this->last_response = \json_decode($res->getBody(), true);
+
+            $this->logs($resource,$verb,json_encode($request),json_encode($res));
         } catch (ClientException $e) {
             throw $e;
             // $err = $e->getResponse();
@@ -415,142 +554,10 @@ class CardPointe
         return $res;
     }
 
-    /**
-     * Getters / Setters.
-     */
+
 
     /**
-     * Get merchant ID.
-     *
-     * @return string
-     */
-    public function getMerchantId()
-    {
-        return $this->merchant_id;
-    }
-
-    /**
-     * Set merchant ID.
-     *
-     * @param string $merchant_id merchant ID
-     *
-     * @return self
-     */
-    public function setMerchantId(string $merchant_id)
-    {
-        $this->merchant_id = $merchant_id;
-
-        return $this;
-    }
-
-    /**
-     * Get gateway username.
-     *
-     * @return string
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * Set username.
-     *
-     * @param string $user API username
-     *
-     * @return self
-     */
-    public function setUser(string $user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get password.
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set password.
-     *
-     * @param string $password API password
-     *
-     * @return self
-     */
-    public function setPassword(string $password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get endpoint.
-     *
-     * @return string
-     */
-    public function getEndpoint()
-    {
-        return $this->endpoint;
-    }
-
-    /**
-     * Set endpoint.
-     *
-     * @param string $endpoint https://sub.domain.tld:port/
-     *
-     * @return self
-     */
-    public function setEndpoint(string $endpoint)
-    {
-        $this->endpoint = $endpoint;
-
-        if ('/' != substr($this->endpoint, -1)) {
-            $this->endpoint .= '/';
-        }
-        if ($this->isWallet) {
-            $this->endpoint .= 'cardsecure/api/';
-        } else {
-            $this->endpoint .= 'cardconnect/rest/';
-        }
-
-        $this->http = new Client(['base_uri' => $this->endpoint]);
-
-        return $this;
-    }
-
-    /**
-     * Get currency code.
-     *
-     * @return string
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
-
-    /**
-     * Set currency code.
-     *
-     * @param string $currency currency code
-     *
-     * @return self
-     */
-    public function setCurrency(string $currency)
-    {
-        $this->currency = $currency;
-
-        return $this;
-    }
-
-    /**
+     * Tokenize GooglePay
      * @param $request
      * @return CaptureResponse
      */
@@ -565,14 +572,13 @@ class CardPointe
 
         $res = $this->send('POST', 'v1/ccn/tokenize', $request);
 
-
-
         $res = $this->parseResponse($res);
 
         return new CaptureResponse($res);
     }
 
     /**
+     * Tokenize ApplePay
      * @param $request
      * @return CaptureResponse
      */
@@ -592,5 +598,25 @@ class CardPointe
         $res = $this->parseResponse($res);
 
         return new CaptureResponse($res);
+    }
+
+    /**
+     * @param $endpoint
+     * @param $method
+     * @param $request
+     * @param $response
+     * @return mixed
+     */
+    public function logs($endpoint,$method,$request,$response)
+    {
+        if(env('CLOVER_LOG')){
+            return DB::table('transaction_logs')->insert([
+                "method"=>$method,
+                "endpoint"=>$endpoint,
+                "request"=>$request,
+                "response"=>$response
+            ]);
+        }
+
     }
 }

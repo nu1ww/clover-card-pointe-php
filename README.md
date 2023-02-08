@@ -11,7 +11,8 @@ CLOVER_SITE_BASE_URL=https://isv-uat.cardconnect.com/
 CLOVER_TOKENIZE_URL=https://isv-uat.cardconnect.com/cardsecure/api/v1/ccn/tokenize
 CLOVER_MERCHANT_ID=123456123456
 CLOVER_USER_NAME='username'
-CLOVER_PASSWORD='password
+CLOVER_PASSWORD='password'
+CLOVER_LOG=true // enable logs 
 
 ```
 

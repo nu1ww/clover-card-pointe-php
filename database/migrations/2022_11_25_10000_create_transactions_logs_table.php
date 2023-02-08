@@ -11,8 +11,9 @@ class CreatePointTransactionsTable extends Migration
             $table->increments('id');
             $table->string('method');
             $table->text('endpoint');
+            $table->text('request');
             $table->text('response');
-            $table->integer('http_status');
+            //$table->integer('http_status');
             $table->timestamps();
         });
     }
